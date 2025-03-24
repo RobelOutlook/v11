@@ -6,36 +6,29 @@ export default function Home() {
   const [message, setMessage] = useState("Checking Telegram...");
 
   useEffect(() => {
-    console.log("Page loaded, window object:", window);
-    console.log("Telegram object:", window.Telegram);
-    console.log("User Agent:", navigator.userAgent);
-
-    if (window.Telegram?.WebApp) {
-      const tg = window.Telegram.WebApp;
-      tg.ready();
-      console.log("WebApp detected, initDataUnsafe:", tg.initDataUnsafe);
-      setMessage(
-        `Telegram Web App detected! User: ${
-          tg.initDataUnsafe?.user?.username || "Unknown"
-        }`
-      );
-    } else {
-      setMessage("Telegram Web App not detected.");
-      console.log("Retrying in 1 second...");
-      setTimeout(() => {
-        if (window.Telegram?.WebApp) {
-          const tg = window.Telegram.WebApp;
-          tg.ready();
-          setMessage(
-            `Telegram Web App detected after delay! User: ${
-              tg.initDataUnsafe?.user?.username || "Unknown"
-            }`
-          );
-        } else {
-          setMessage("Telegram Web App still not detected after delay.");
-        }
-      }, 1000);
-    }
+    console.log("Loading Telegram script...");
+    const script = document.createElement("script");
+    script.src = "https://telegram.org/js/telegram-web-app.js";
+    script.async = true;
+    script.onload = () => {
+      console.log("Script loaded!");
+      if (window.Telegram?.WebApp) {
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        setMessage(
+          `Telegram Web App detected! User: ${
+            tg.initDataUnsafe?.user?.username || "Unknown"
+          }`
+        );
+      } else {
+        setMessage("Telegram Web App not detected after script load.");
+      }
+    };
+    script.onerror = () => {
+      console.error("Script failed to load!");
+      setMessage("Failed to load Telegram script.");
+    };
+    document.head.appendChild(script);
   }, []);
 
   return (
