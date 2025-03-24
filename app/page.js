@@ -83,7 +83,7 @@ export default function Home() {
         {/* User Info Section */}
         <div className="text-center mb-6">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">
-            Welcome Back, {user.firstName} {user.lastName}!
+          Hey There, {user.firstName} {user.lastName}! 😊
           </h1>
           {user.photoUrl && (
             <img
