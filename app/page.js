@@ -54,55 +54,109 @@ export default function Home() {
   }, []);
 
   if (error) {
-    return <div className="container mx-auto p-4 text-red-500">{error}</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="bg-red-100 text-red-700 p-4 rounded-lg shadow-md">
+          {error}
+        </div>
+      </div>
+    );
   }
 
   if (!user) {
-    return <div className="container mx-auto p-4">Loading...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="text-gray-600 text-lg">Loading...</div>
+      </div>
+    );
   }
 
+  // Logic to determine if buttons are active based on wallet balance
+  const walletBalance = parseFloat(user.walletBalance) || 0;
+  const is10BirrActive = walletBalance >= 10;
+  const is30BirrActive = walletBalance >= 30;
+  const is50BirrActive = walletBalance >= 50;
+
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">
-        Welcome Back, {user.firstName} {user.lastName}!
-      </h1>
-      <p>
-        <strong>Telegram ID:</strong> {user.telegramId}
-      </p>
-      {user.username && (
-        <p>
-          <strong>Username:</strong> @{user.username}
-        </p>
-      )}
-      {user.firstName && (
-        <p>
-          <strong>First Name:</strong> {user.firstName}
-        </p>
-      )}
-      {user.lastName && (
-        <p>
-          <strong>Last Name:</strong> {user.lastName}
-        </p>
-      )}
-      {user.photoUrl && (
-        <p>
-          <strong>Photo:</strong>{" "}
-          <img src={user.photoUrl} alt="Profile" width="100" />
-        </p>
-      )}
-      {user.languageCode && (
-        <p>
-          <strong>Language:</strong> {user.languageCode}
-        </p>
-      )}
-      <p>
-        <strong>Wallet Balance:</strong> {user.walletBalance}
-      </p>
-      {user.phoneNumber && (
-        <p>
-          <strong>Phone Number:</strong> {user.phoneNumber}
-        </p>
-      )}
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
+      <div className="bg-white rounded-xl shadow-lg p-6 max-w-md w-full">
+        {/* User Info Section */}
+        <div className="text-center mb-6">
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">
+            Welcome Back, {user.firstName} {user.lastName}!
+          </h1>
+          {user.photoUrl && (
+            <img
+              src={user.photoUrl}
+              alt="Profile"
+              className="w-24 h-24 rounded-full mx-auto mb-4 border-2 border-gray-200"
+            />
+          )}
+          <div className="text-gray-600 space-y-1">
+            <p>
+              <strong>ID:</strong> {user.telegramId}
+            </p>
+            {user.username && (
+              <p>
+                <strong>Username:</strong> @{user.username}
+              </p>
+            )}
+            {user.languageCode && (
+              <p>
+                <strong>Language:</strong> {user.languageCode}
+              </p>
+            )}
+            {user.phoneNumber && (
+              <p>
+                <strong>Phone:</strong> {user.phoneNumber}
+              </p>
+            )}
+            <p className="text-lg font-semibold text-green-600">
+              <strong>Wallet Balance:</strong> {user.walletBalance} Birr
+            </p>
+          </div>
+        </div>
+
+        {/* Bingo Bet Buttons */}
+        <div className="grid grid-cols-2 gap-4">
+          <a
+            href="/bingo/free"
+            className="bg-blue-500 text-white font-semibold py-3 px-4 rounded-lg text-center hover:bg-blue-600 transition-colors"
+          >
+            Free Play
+          </a>
+          <a
+            href={is10BirrActive ? "/bingo/10birr" : undefined}
+            className={`${
+              is10BirrActive
+                ? "bg-green-500 hover:bg-green-600"
+                : "bg-gray-300 cursor-not-allowed"
+            } text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors`}
+          >
+            10 Birr
+          </a>
+          <a
+            href={is30BirrActive ? "/bingo/30birr" : undefined}
+            className={`${
+              is30BirrActive
+                ? "bg-yellow-500 hover:bg-yellow-600"
+                : "bg-gray-300 cursor-not-allowed"
+            } text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors`}
+          >
+            30 Birr
+          </a>
+          <a
+            href={is50BirrActive ? "/bingo/50birr" : undefined}
+            className={`${
+              is50BirrActive
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-gray-300 cursor-not-allowed"
+            } text-white font-semibold py-3 px-4 rounded-lg text-center transition-colors`}
+          >
+            50 Birr
+          </a>
+        </div>
+      </div>
     </div>
   );
 }
