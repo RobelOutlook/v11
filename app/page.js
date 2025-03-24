@@ -1,43 +1,53 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { loadTelegramScript } from "../lib/telegram";
 
 export default function Home() {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (typeof window !== "undefined" && window.Telegram?.WebApp) {
-      const tg = window.Telegram.WebApp;
-      tg.ready();
+    loadTelegramScript();
 
-      const initDataUnsafe = tg.initDataUnsafe || {};
+    // Wait for the Telegram script to load
+    const checkTelegram = () => {
+      if (window.Telegram?.WebApp) {
+        const tg = window.Telegram.WebApp;
+        tg.ready();
 
-      if (initDataUnsafe.user) {
-        fetch("/api/telegramUser", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(initDataUnsafe.user),
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            if (data.error) {
-              setError(data.error);
-            } else {
-              setUser(data);
-            }
+        const initDataUnsafe = tg.initDataUnsafe || {};
+
+        if (initDataUnsafe.user) {
+          fetch("/api/telegramUser", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(initDataUnsafe.user),
           })
-          .catch((err) => {
-            setError("Failed to fetch user data");
-          });
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.error) {
+                setError(data.error);
+              } else {
+                setUser(data);
+              }
+            })
+            .catch((err) => {
+              setError("Failed to fetch user data");
+            });
+        } else {
+          setError("No user data available from Telegram");
+        }
       } else {
-        setError("No user data available");
+        setError("Waiting for Telegram Web App to load...");
+        // Retry after a short delay
+        setTimeout(checkTelegram, 500);
       }
-    } else {
-      setError("This app should be opened in Telegram");
-    }
+    };
+
+    checkTelegram();
   }, []);
 
   if (error) {
