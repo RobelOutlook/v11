@@ -1,24 +1,25 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { loadTelegramScript } from "../lib/telegram";
 
 export default function Home() {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    loadTelegramScript();
-
-    // Wait for the Telegram script to load
+    console.log("Starting useEffect...");
     const checkTelegram = () => {
+      console.log("Checking Telegram:", window.Telegram);
       if (window.Telegram?.WebApp) {
+        console.log("Telegram WebApp detected!");
         const tg = window.Telegram.WebApp;
         tg.ready();
+        console.log("WebApp ready, initDataUnsafe:", tg.initDataUnsafe);
 
         const initDataUnsafe = tg.initDataUnsafe || {};
 
         if (initDataUnsafe.user) {
+          console.log("User data found:", initDataUnsafe.user);
           fetch("/api/telegramUser", {
             method: "POST",
             headers: {
@@ -28,6 +29,7 @@ export default function Home() {
           })
             .then((res) => res.json())
             .then((data) => {
+              console.log("API response:", data);
               if (data.error) {
                 setError(data.error);
               } else {
@@ -35,6 +37,7 @@ export default function Home() {
               }
             })
             .catch((err) => {
+              console.error("Fetch error:", err);
               setError("Failed to fetch user data");
             });
         } else {
@@ -42,7 +45,7 @@ export default function Home() {
         }
       } else {
         setError("Waiting for Telegram Web App to load...");
-        // Retry after a short delay
+        console.log("Telegram not ready yet, retrying...");
         setTimeout(checkTelegram, 500);
       }
     };
