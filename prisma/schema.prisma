@@ -15,5 +15,7 @@ model User {
   lastName     String?
   photoUrl     String?
   languageCode String?
+  walletBalance Float   @default(0.0) // Added wallet balance
+  phoneNumber  String?  // Added phone number (optional)
   createdAt    DateTime @default(now())
 }

@@ -95,6 +95,14 @@ export default function Home() {
           <strong>Language:</strong> {user.languageCode}
         </p>
       )}
+      <p>
+        <strong>Wallet Balance:</strong> {user.walletBalance}
+      </p>
+      {user.phoneNumber && (
+        <p>
+          <strong>Phone Number:</strong> {user.phoneNumber}
+        </p>
+      )}
     </div>
   );
 }

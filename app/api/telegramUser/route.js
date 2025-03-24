@@ -24,6 +24,8 @@ export async function POST(request) {
           lastName: userData.last_name || "",
           photoUrl: userData.photo_url || "",
           languageCode: userData.language_code || "",
+          walletBalance: 0.0, // Initial wallet balance
+          phoneNumber: userData.phone_number || "", // Phone number from Telegram
         },
       });
     }
